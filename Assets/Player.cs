@@ -5,10 +5,15 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class Player : MonoBehaviour
 {
-    [Tooltip("In meters/s")][SerializeField]
-    private float playervelocity = 100f;
-    [Tooltip("In m")] [SerializeField] 
-    float xRange = 10f;
+    [Tooltip("In meters/s")][SerializeField] private float playervelocity = 100f;
+    [Tooltip("In m")] [SerializeField] float xRange = 10f;
+
+    [SerializeField] private float posPitchFactor = -5f;
+    [SerializeField] private float controlPitchFactor = -5f;
+
+
+     float xThrow;
+     float yThrow;
     void Start()
     {
        
@@ -22,16 +27,19 @@ public class Player : MonoBehaviour
 
     private void processRotation()
     {
-        transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+        float pitch = transform.localRotation.y * posPitchFactor + yThrow  *controlPitchFactor;
+        float yaw = 0f;
+        float roll = 0f;
+        transform.localRotation = Quaternion.Euler(pitch, yaw, roll);
     }
 
     private void processTranslation()
     {
-        float horizontalThrow = CrossPlatformInputManager.GetAxis("Horizontal");
-        float verticalThrow = CrossPlatformInputManager.GetAxis("Vertical");
+        float xThrow = CrossPlatformInputManager.GetAxis("Horizontal");
+        float yThrow = CrossPlatformInputManager.GetAxis("Vertical");
 
-        float xOffset = horizontalThrow * playervelocity * Time.deltaTime;
-        float yOffset = verticalThrow * playervelocity * Time.deltaTime;
+        float xOffset = xThrow * playervelocity * Time.deltaTime;
+        float yOffset = yThrow * playervelocity * Time.deltaTime;
 
         float rawXPos = transform.localPosition.x + xOffset;
         float rawyPos = transform.localPosition.y + yOffset;
